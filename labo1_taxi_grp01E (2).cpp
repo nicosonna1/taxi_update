@@ -16,65 +16,84 @@
 
 using namespace std;
 
-int main() {
-    // Variables
-    // -----------------------------------------
-    // Constantes
-    const float taxeBase       = 5.00, // En euros
-                surtaxeBagages = 2.50, // En euros
-                tarifMinutes   = 1.20; // En euros
+int main()
+{
+     // Variables
+     // -----------------------------------------
+     // Constantes
+     const float TAXE_BASE = 5.00f, // En euros
+         SURTAXE_BAGAGES = 2.60f,   // En euros
+         TARIF_MIN_JOUR = 1.00f,    // En euros
+         TARIF_MIN_NUIT = 1.60f;
+     const short H_FIN_NUIT = 8,
+                 H_FIN_JOUR = 20,
+                 BAG_MIN = 0,
+                 BAG_MAX = 4;
+                 
+     // boolean
+     bool tarifJour;
 
-    // Variables numériques
-    unsigned int bagages;
-    float distance, vMoyenne,
-          taxeBagages, prixCourse, prixTotal;
+     // Variables numériques
+     short bagages,
+         heures,
+         minutes;
 
-    // Affichage de bienvenue
-    // -----------------------------------------
-    cout << "Bonjour, ce programme va vous demander de saisir des informations "
-         << "sur votre voyage !"                        << endl
-         << "Voici les conditions :"                    << endl
-         << "============================"              << endl
-         << "- Prise en charge   : " << taxeBase        << endl
-         << "- Suppl. par bagage : " << surtaxeBagages  << endl
-         << "- Tarif/Minute      : " << tarifMinutes    << endl
-         << endl;
+     float distance,
+         vMoyenne,
+         taxeBagages,
+         prixCourse,
+         prixTotal,
+         tempsJour,
+         tempsNuit;
 
-    // Saisie des données
-    // -----------------------------------------
-    cout << "Votre commande : "             << endl
-         << "============================"  << endl;
-    cout << "- Le nombre de bagages"        << setw(8) << ": ";
-    cin >> bagages;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+     // Affichage de bienvenue
+     // -----------------------------------------
+     cout << "Bonjour, ce programme va vous demander de saisir des informations "
+          << "sur votre voyage !" << endl
+          << "Voici les conditions :" << endl
+          << "============================" << endl
+          << "- Prise en charge   : " << taxeBase << endl
+          << "- Suppl. par bagage : " << SURTAXE_BAGAGES << endl
+          << "- Tarif/Minute      : " << TARIF_MINUTES << endl
+          << endl;
 
-    cout << "- La distance [km]"            << setw(12) << ": ";
-    cin >> distance;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+     // Saisie des données
+     // -----------------------------------------
+     cout << "Votre commande : " << endl
+          << "============================" << endl;
+     cout << "- Le nombre de bagages" << setw(8) << ": ";
+     cin >> bagages;
+     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    cout << "- La vitesse moyenne [km/h]"   << setw(3) << ": ";
-    cin >> vMoyenne;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+     cout << "- La distance [km]" << setw(12) << ": ";
+     cin >> distance;
+     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    // Calcul des prix
-    // -----------------------------------------
-    taxeBagages = bagages * surtaxeBagages;
-    prixCourse  = distance / vMoyenne * 60 * tarifMinutes;  // 1 minute = 60 secondes
-    prixTotal   = taxeBase + taxeBagages + prixCourse;
+     cout << "- La vitesse moyenne [km/h]" << setw(3) << ": ";
+     cin >> vMoyenne;
+     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    // Affichage du ticket
-    // -----------------------------------------
-    cout << endl << "Votre ticket : "       << endl
-         << "============================"  << endl
-         << fixed << setprecision(2)
-         << "- Prise en charge      : "     << taxeBase     << "€" << endl
-         << "- Supp bagages         : "     << taxeBagages  << "€" << endl
-         << "- Prix de la course    : "     << prixCourse   << "€" << endl
-         << "  TOTAL                : "     << prixTotal    << "€" << endl;
+     // Calcul des prix
+     // -----------------------------------------
+     taxeBagages = bagages * SURTAXE_BAGAGES;
+     prixCourse = distance / vMoyenne * 60 * TARIF_MINUTES; // 1 minute = 60 secondes
+     prixTotal = taxeBase + taxeBagages + prixCourse;
 
-    // Sortie
-    cout << endl << "Pressez ENTER pour quitter..." << endl;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+     // Affichage du ticket
+     // -----------------------------------------
+     cout << endl
+          << "Votre ticket : " << endl
+          << "============================" << endl
+          << fixed << setprecision(2)
+          << "- Prise en charge      : " << taxeBase << "€" << endl
+          << "- Supp bagages         : " << taxeBagages << "€" << endl
+          << "- Prix de la course    : " << prixCourse << "€" << endl
+          << "  TOTAL                : " << prixTotal << "€" << endl;
 
-    return EXIT_SUCCESS;
+     // Sortie
+     cout << endl
+          << "Pressez ENTER pour quitter..." << endl;
+     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+     return EXIT_SUCCESS;
 }
