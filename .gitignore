@@ -1,0 +1,4 @@
+# extension a ignorer
+
+*.code-workspace
+.vscode/
