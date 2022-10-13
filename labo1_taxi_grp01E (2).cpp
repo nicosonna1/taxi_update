@@ -20,17 +20,18 @@ int main() {
     // Variables
     // -----------------------------------------
     // Constantes
-    const float taxeBase       = 5.00, // En euros
-                surtaxeBagages = 2.50, // En euros
-                tarifMinutes   = 1.20; // En euros
+    const float taxeBase       = 5.00f, // En euros
+                surtaxeBagages = 2.50f, // En euros
+                tarifMinutes   = 1.20f; // En euros
 
     // Variables numériques
-    unsigned int bagages;
+    int bagages; // de "u int" -> "int" pour éviter débordement
     float distance, vMoyenne,
           taxeBagages, prixCourse, prixTotal;
 
     // Affichage de bienvenue
     // -----------------------------------------
+	 //bien vérifier si texte correspond à la consigne
     cout << "Bonjour, ce programme va vous demander de saisir des informations "
          << "sur votre voyage !"                        << endl
          << "Voici les conditions :"                    << endl
@@ -44,9 +45,9 @@ int main() {
     // -----------------------------------------
     cout << "Votre commande : "             << endl
          << "============================"  << endl;
-    cout << "- Le nombre de bagages"        << setw(8) << ": ";
+    cout << "- Le nombre de bagages"        << setw(8) << ": "; //valeur en dure
     cin >> bagages;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //utiliser macro
 
     cout << "- La distance [km]"            << setw(12) << ": ";
     cin >> distance;
@@ -58,7 +59,7 @@ int main() {
 
     // Calcul des prix
     // -----------------------------------------
-    taxeBagages = bagages * surtaxeBagages;
+    taxeBagages = bagages * surtaxeBagages; //faire conversion explicite
     prixCourse  = distance / vMoyenne * 60 * tarifMinutes;  // 1 minute = 60 secondes
     prixTotal   = taxeBase + taxeBagages + prixCourse;
 
