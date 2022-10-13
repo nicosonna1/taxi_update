@@ -17,7 +17,7 @@
 using namespace std;
 
 // unité monétaire
-#define UNITE_MONAIE "fr" 
+#define UNITE_MONAIE " fr"
 #define RESET_BUFFER cout << "- Le nombre de bagages" << setw(8) << ": "
 
 int main()
@@ -29,7 +29,7 @@ int main()
          SURTAXE_BAGAGES = 2.60f,   // En euros
          TARIF_MIN_JOUR = 1.00f,    // En euros
          TARIF_MIN_NUIT = 1.60f;
-         TAXE_BASE = 5.00f
+
      const short H_FIN_NUIT = 8,
                  H_FIN_JOUR = 20,
                  BAG_MIN = 0,
@@ -93,7 +93,7 @@ int main()
      RESET_BUFFER;
 
      cout << "- Heure de départ [HH:MM]" << setw(3) << ": ";
-     cin.get(heures,':') >> vMoyenne;
+     //cin.get(heures,':');
      RESET_BUFFER;     
 
      // Calcul des prix
@@ -113,7 +113,7 @@ int main()
           << fixed << setprecision(2)
           << "- Prise en charge"             << ":" << TAXE_BASE << UNITE_MONAIE << endl
           << "- Supp bagages"             << ":" << taxeBagages << UNITE_MONAIE << endl
-          << "- Prix de la course"             << ":" << << prixCourse << UNITE_MONAIE << endl
+          << "- Prix de la course"             << ":" << prixCourse << UNITE_MONAIE << endl
           << "  TOTAL"             << ":" << prixTotal << UNITE_MONAIE << endl;
 
      // Sortie
