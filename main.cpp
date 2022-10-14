@@ -9,6 +9,15 @@
  * ------------------------------------------
  */
 
+/*modifs:
+- correction texte affichage selon la consigne
+- enlevé unité monétaire
+- enlevé certains RESET_BUFFER
+- add cte de précision (2) + utilisation dans affichage
+- chg RESET BUFFER
+- chg largeurs pour affichage correct
+*/
+
 #include <cstdlib>  // EXIT_SUCCESS
 #include <iostream> // cout & cin
 #include <limits>   // numeric_limits<streamsize>
