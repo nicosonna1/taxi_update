@@ -33,6 +33,7 @@ Compilateur    : Mingw-w64 g++ 12.2.0, C++23
 
 using namespace std;
 
+#define SEPARATEUR "########################################################"
 #define RESET_BUFFER cin.ignore(numeric_limits<streamsize>::max(), '\n')
 
 int main() {
@@ -88,8 +89,10 @@ int main() {
 	// On initialise tempsJournee & tempsNuit, autrement elles peuvent être utilisées
 	// sans être initialisées.
 	int
-		tempsJournee = 0,
-		tempsNuit = 0,
+        //initialisation des deux variable un warning sera généré lors de leur appel dans des conditions
+		tempsJournee =0,
+		tempsNuit=0,
+
 		minTotalDepart,
 		prochainChgTarif,
 		tempsTotal;
@@ -130,7 +133,7 @@ int main() {
 	// Saisie des données
 	// -----------------------------------------
 	cout << "Votre commande " 														<< endl
-		  << "==============" 														<< endl
+		  << SEPARATEUR														<< endl
 		  << left 	<< setw(LARG_COMMANDE) 	<< " - nbre de bagage "
 		  << right	<< setw(LARG_COL_P) 	 	<< " [0 - 4]" 				<< " : ";
 	cin  >> bagages;
@@ -208,15 +211,10 @@ int main() {
 							tempsTotal -= H_FIN_NUIT * MNT_DANS_H - 1;
 							tempsJournee += tempsTotal;
 
-							//test
-							cout << "Temps Nuit = " << tempsNuit << endl;
-							cout << "Temps total = " << tempsTotal << endl;
-							cout << "Temps journee = " << tempsJournee << endl;
 
 						} else {
+
 							tempsNuit += tempsTotal;
-							cout << "Temps total = " << tempsTotal << endl;
-							cout << " Temps nuit = " << tempsNuit << endl;
 							}
 						}
 
@@ -234,22 +232,22 @@ int main() {
 					// -----------------------------------------
 					cout << endl
 						  << "Votre ticket " << endl
-						<< "==============" << endl
+						<< SEPARATEUR << endl
 						<< fixed << setprecision(PRECISION)
 						<< left << setw(LARG_COL) << " - prise en charge" << ":"
 						<< right << setw(LARG_COL_P) << TAXE_BASE << endl
 						<< left << setw(LARG_COL) << " - supp bagages" << ":"
 						<< right << setw(LARG_COL_P) << taxeBagages << endl
 						<< left << setw(LARG_COL) << " - temps course" << endl
-						<< right << setw(LARG_H_TICKET) << "xxx' @ "
+						<< right << setw(LARG_H_TICKET) << tempsJournee << " ' @ "
 						<< TARIF_MNT_JOUR
 						<< " : "
 						<< right << setw(LARG_PRIX_TICKET) << prixJournee << endl
-						<< right << setw(LARG_H_TICKET) << "yyy' @ "
+						<< right << setw(LARG_H_TICKET) << tempsNuit <<" ' @ "
 						<< TARIF_MNT_NUIT << " : "
 						<< right << setw(LARG_PRIX_TICKET) << prixNuit << endl
 						<< left << setw(LARG_COL) << "---------------------- "
-						<< right << setw(LARG_COL_P) << "  -----------" << endl
+						<< right << setw(LARG_PRIX_TICKET) << " -----------" << endl
 						<< right << setw(LARG_TOTAL) << "TOTAL" << " : "
 						<< right << setw(LARG_PRIX_TICKET) << prixTotal << endl;
 
