@@ -54,9 +54,9 @@ int main() {
 	// Constantes de prix
 	const float
 		TAXE_BASE = 5.00f, // En euros
-		SURTAXE_BAGAGES = 2.60f,   // En euros
-		TARIF_MNT_JOUR = 1.00f,    // En euros
-		TARIF_MNT_NUIT = 1.60f;
+	SURTAXE_BAGAGES = 2.60f,   // En euros
+	TARIF_MNT_JOUR = 1.00f,    // En euros
+	TARIF_MNT_NUIT = 1.60f;
 
 	// Constantes des bornes d'intervalle des saisies
 	const short
@@ -69,21 +69,21 @@ int main() {
 		V_MIN = 30,
 		V_MAX = 120,
 
-		// Constantes de temps
-		MNT_DANS_H = 60;
+	// Constantes de temps
+	MNT_DANS_H = 60;
 
 
 	// Constantes d'affichage (largeur des collones du tableau)
 	const short
 		LARG_COL = 23,
 		LARG_COL_P = 11, // largeur du ":"
-		LARG_AFF_COMMANDE = 26,
+	LARG_AFF_COMMANDE = 26,
 		LARG_AFF_H_TICKET = 18,
 		LARG_AFF_PRIX_TICKET = 10,
 		LARG_AFF_TOTAL = 22,
 
-		// Constante de précision
-		PRECISION = 2;
+	// Constante de précision
+	PRECISION = 2;
 
 	// Constante message de fin du programme
 	const string
@@ -91,16 +91,17 @@ int main() {
 
 	// Variables numériques
 	short
-			bagages,
-			hDepart,
-			mDepart;
+		bagages,
+		hDepart,
+		mDepart;
 
 	// Les variables ci-dessous sont de type entier afin d'éviter des conversions
 	// implicites dangereuses.
 	int
-		tempsJournee,
-		tempsNuit,
+		tempsJournee = 0,
+		tempsNuit = 0,
 		minTotalDepart,
+		prochainChgTarif,
 		tempsTotal;
 
 	float
@@ -176,8 +177,7 @@ int main() {
 					// convertion en minutes du départ
 
 					estJour = hDepart >= H_FIN_NUIT && hDepart < H_FIN_JOUR;
-					// test avec hDepart: 07:58, distance = 500, vMoyenne = 30
-					minTotalDepart = hDepart * MNT_DANS_H + mDepart;   //478
+					minTotalDepart = hDepart * MNT_DANS_H + mDepart;
 
 					//calcul de temps de la course
 
@@ -191,71 +191,67 @@ int main() {
 					// => 8 <= hDepart < 20, On pourrait aussi remplacer par un bool pour être plus
 					// facile à lire
 					// CAS OU ON COMMENCE LA JOURNEE
-					if (estJour) {
-						//non car hDepart = 7
-						tempsJournee = H_FIN_JOUR * MNT_DANS_H - minTotalDepart;
-						tempsTotal -= tempsJournee;
 
-						if (tempsTotal <=
-							 8 * MNT_DANS_H) { // si le temps restant est plus petit que 8h
-							tempsNuit = tempsTotal;  //on met le temps restant dans temps nuit
-						} else { // dans ce cas le temps restant est plus grand que 8h
-							tempsNuit = 8 * MNT_DANS_H; //on met 8h dans temps nuit
-							tempsTotal -= tempsNuit; //on enleve les 8h qui ont été affecté à tempsNuit
-							tempsJournee += tempsTotal; // et on rajoute le reste à tempsJour
+					if (estJour) {
+
+						//on doit check si tempsTotal arrive au prochain changement de
+						// tarif: on regarde combien de temps jusqu'au prochain chg
+						prochainChgTarif = H_FIN_JOUR * MNT_DANS_H - minTotalDepart;
+
+						if (tempsTotal >= prochainChgTarif) {
+
+							tempsJournee = H_FIN_JOUR * MNT_DANS_H - minTotalDepart - 1;
+							tempsTotal -= tempsJournee;
+							//test
+							cout << "Temps Jour = " << tempsJournee << endl;
+							cout << "Temps total = " << tempsTotal << endl;
+
+							// si le temps restant est plus petit que 8h
+							if (tempsTotal <= 8 * MNT_DANS_H) {
+								tempsNuit = tempsTotal;  //on met le temps restant dans temps nuit
+							} else { // dans ce cas le temps restant est plus grand que 8h
+								tempsNuit = 8 * MNT_DANS_H; //on met 8h dans temps nuit
+								tempsTotal -= tempsNuit; //on enleve les 8h qui ont été affecté à tempsNuit
+								tempsJournee += tempsTotal; // et on rajoute le reste à tempsJour
+							}
+						} else {
+							tempsJournee = tempsTotal;
 						}
 
 						//CAS OU ON COMMENCE LA NUIT
 					} else {
-						//test
-						cout << "Temps total = " << tempsTotal << endl;
 
-						tempsNuit = H_FIN_NUIT * MNT_DANS_H - minTotalDepart;
-						// 480 - 478 = 2
-						tempsTotal -= tempsNuit; // 1000 - 2 = 998
+						prochainChgTarif = H_FIN_NUIT * MNT_DANS_H - minTotalDepart;
 
-						//test
-						cout << "Temps restant = " << tempsTotal << endl
-							  << "Temps jour = " << tempsJournee << endl
-							  << "Temps nuit = " << tempsNuit << endl;
+						if (tempsTotal >= prochainChgTarif) {
 
-						if (tempsTotal <= 8 * MNT_DANS_H) { //non
-							tempsJournee = tempsTotal;
+							tempsNuit = H_FIN_NUIT * MNT_DANS_H - minTotalDepart - 1;
+							tempsTotal -= tempsNuit;
 
 							//test
-							cout << "Temps restant = " << tempsTotal << endl
-								  << "Temps jour = " << tempsJournee << endl
-								  << "Temps nuit = " << tempsNuit << endl;
-
-						} else {
-							tempsJournee = 8 * MNT_DANS_H; // 480
-							tempsTotal -= tempsJournee; // 998 - 480 =  518
-
-							//test
-							cout << "Temps restant = " << tempsTotal << endl
-								  << "Temps jour = " << tempsJournee << endl
-								  << "Temps nuit = " << tempsNuit << endl;
+							cout << "Temps Nuit = " << tempsNuit << endl;
+							cout << "Temps total = " << tempsTotal << endl;
 
 							if (tempsTotal <= 8 * MNT_DANS_H) {
+								tempsJournee = tempsTotal;
+
+								//test
+								cout << "Temps restant = " << tempsTotal << endl
+									  << "Temps jour = " << tempsJournee << endl
+									  << "Temps nuit = " << tempsNuit << endl;
+
+							} else {
+								tempsJournee = 8 * MNT_DANS_H;
+								tempsTotal -= tempsJournee;
 								tempsNuit += tempsTotal;
 
 								//test
 								cout << "Temps restant = " << tempsTotal << endl
 									  << "Temps jour = " << tempsJournee << endl
 									  << "Temps nuit = " << tempsNuit << endl;
-
-							} else {// s'il reste encore plus que 480 min
-								tempsNuit += 8 * MNT_DANS_H;
-								tempsTotal -= 8 * MNT_DANS_H;
-								tempsJournee += tempsTotal;
-
-								//test
-								cout << "Temps restant = " << tempsTotal << endl
-									  << "Temps jour = " << tempsJournee << endl
-									  << "Temps nuit = " << tempsNuit << endl;
-
 							}
-
+						} else {
+							tempsNuit = tempsTotal;
 						}
 					}
 
@@ -271,9 +267,6 @@ int main() {
 
 					// Affichage du ticket
 					// -----------------------------------------
-
-
-
 					cout << endl
 						  << "Votre ticket " << endl
 						  << "==============" << endl
@@ -298,29 +291,30 @@ int main() {
 				} else {
 					cout << "L'heure de depart doit etre comprise dans entre [00:00, "
 							  "23:59]. " << endl
-							  << MSG_FIN;
+						  << MSG_FIN;
 					return EXIT_FAILURE;
 				}
 			} else {
-				cout << "La vitesse doit etre comprise entre [30, 120] [km/h]. " << endl
-				<< MSG_FIN;
+				cout << "La vitesse doit etre comprise entre [30, 120] [km/h]. "
+					  << endl
+					  << MSG_FIN;
 				RESET_BUFFER;
 				return EXIT_FAILURE;
 			}
 		} else {
 			cout << "La distance doit etre comprise entre [0, 500] [km]. " << endl
-			<< MSG_FIN;
+				  << MSG_FIN;
 			RESET_BUFFER;
 			return EXIT_FAILURE;
 		}
 	} else {
 		cout << "Le nombre de bagages doit etre compris entre [0, 4]. " << endl
-			<< MSG_FIN;
+			  << MSG_FIN;
 		RESET_BUFFER;
 		return EXIT_FAILURE;
 	}
-
 	cout << endl << MSG_FIN;
 	RESET_BUFFER;
 	return EXIT_SUCCESS;
+
 }
