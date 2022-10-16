@@ -1,17 +1,16 @@
 /*
  * ------------------------------------------
- * File     : main.cpp
- * Authors  : Vitória Oliveira, Nicolas Sonnard
- * 			  (Original : Jonas Huegli & Sebastian Diaz)
- * Date     : 11.10.2022
- * Purpose  : Ce programme calcule le prix d'une course de taxi.
- * L'utilisateur est prié de saisir quelques informations pour le calcul du prix,
- * puis un ticket complet lui est présenté.
- *
-Remarque(s)    : Le ticket est imprimé selon un format imposé dans la consigne.
- 				 La saisie utilisateur est contrôlée, auquel cas le programme
- 				 s'interrompt avec un message à l'utilisateur.
- 				 Chaque minute consommée est facturée.
+ * File     	: main.cpp
+ * Authors  	: Vitória Oliveira, Nicolas Sonnard
+ * 			 	 (Original : Jonas Huegli & Sebastian Diaz)
+ * Date    	 	: 11.10.2022
+ * Purpose  	: Ce programme calcule le prix d'une course de taxi.
+ * 			  	  L'utilisateur est prié de saisir quelques informations pour le
+ * 			  	  calcul du prix, puis un ticket complet lui est présenté.
+ * Remarque(s) : Le ticket est imprimé selon un format imposé dans la consigne.
+					  La saisie utilisateur est contrôlée, auquel cas le programme
+ 				 	  s'interrompt avec un message à l'utilisateur.
+ 				 	  Chaque minute consommée est facturée.
 Compilateur    : Mingw-w64 g++ 12.2.0, C++23
 
  * ------------------------------------------
@@ -46,19 +45,20 @@ calcules seront fait en minutes
 
 using namespace std;
 
-
 #define RESET_BUFFER cin.ignore(numeric_limits<streamsize>::max(), '\n')
 
 int main() {
 	// Variables
-	// -----------------------------------------
-	// Constantes
+	// ---------------------------
+
+	// Constantes de prix
 	const float
 		TAXE_BASE = 5.00f, // En euros
-	SURTAXE_BAGAGES = 2.60f,   // En euros
-	TARIF_MNT_JOUR = 1.00f,    // En euros
-	TARIF_MNT_NUIT = 1.60f;
+		SURTAXE_BAGAGES = 2.60f,   // En euros
+		TARIF_MNT_JOUR = 1.00f,    // En euros
+		TARIF_MNT_NUIT = 1.60f;
 
+	// Constantes des bornes d'intervalle des saisies
 	const short
 		H_FIN_NUIT = 8,
 		H_FIN_JOUR = 20,
@@ -69,51 +69,54 @@ int main() {
 		V_MIN = 30,
 		V_MAX = 120,
 
+		// Constantes de temps
 		MNT_DANS_H = 60;
 
 
-	// largeur des collones du tableau
-	const short LARG_COL = 23;
-	//largeur du ":"
-	const short LARG_COL_P = 11; //de 7 à 11 pour aligner avec tranche horaire
-	const short LARG_AFF_COMMANDE = 26;
-	const short LARG_AFF_H_TICKET = 18;
-	const short LARG_AFF_PRIX_TICKET = 10;
-	const short LARG_AFF_TOTAL = 22;
-	//cst de précision
-	const short PRECISION = 2;
+	// Constantes d'affichage (largeur des collones du tableau)
+	const short
+		LARG_COL = 23,
+		LARG_COL_P = 11, // largeur du ":"
+		LARG_AFF_COMMANDE = 26,
+		LARG_AFF_H_TICKET = 18,
+		LARG_AFF_PRIX_TICKET = 10,
+		LARG_AFF_TOTAL = 22,
 
+		// Constante de précision
+		PRECISION = 2;
+
+	// Constante message de fin du programme
 	const string
 		MSG_FIN = "Presser ENTER pour quitter";
 
 	// Variables numériques
-	short bagages,
-		hDepart,
-		mDepart;
+	short
+			bagages,
+			hDepart,
+			mDepart;
 
-	// pour éviter conversions implicites/explicites ?
-	int tempsJournee,
+	// Les variables ci-dessous sont de type entier afin d'éviter des conversions
+	// implicites dangereuses.
+	int
+		tempsJournee,
 		tempsNuit,
 		minTotalDepart,
 		tempsTotal;
 
-
-	float distance,
+	float
+		distance,
 		vMoyenne,
 		taxeBagages,
 		prixJournee,
 		prixNuit,
 		prixTotal;
 
+	bool
+		estJour;
+
 
 	// Affichage de bienvenue
-	// -----------------------------------------
-
-
-
-
-
-
+	// ---------------------------
 	cout << "Bonjour, ce programme va vous demander de saisir des informations "
 		  << "sur votre voyage !" << endl
 		  << "voici les conditions :" << endl
@@ -145,6 +148,7 @@ int main() {
 	//je crois qu'on a pas besoin de ça car dès que la valeur entrée est fausse, il
 	// faudra tout de suite arrêter le programme.
 
+	// Vérification des saisies
 	if (bagages >= BAG_MIN && bagages <= BAG_MAX) {
 		cout << left << setw(LARG_AFF_COMMANDE) << " - distance [km] "
 			  << setw(LARG_COL_P) << right << " [0 - 500]" << " : ";
@@ -167,9 +171,11 @@ int main() {
 				cin >> mDepart;
 				RESET_BUFFER;
 
+
 				if (hDepart >= 0 && hDepart < 24 && mDepart >= 0 && mDepart < 60) {
 					// convertion en minutes du départ
 
+					estJour = hDepart >= H_FIN_NUIT && hDepart < H_FIN_JOUR;
 					// test avec hDepart: 07:58, distance = 500, vMoyenne = 30
 					minTotalDepart = hDepart * MNT_DANS_H + mDepart;   //478
 
@@ -177,14 +183,15 @@ int main() {
 
 					//on estime que la conversion explicite ci dessous n'est pas
 					// dangereuse car tempsTotal MAX = 1001
-					tempsTotal = int(ceil(distance / vMoyenne * MNT_DANS_H)); //1000
+					tempsTotal = int(ceil(distance / vMoyenne * MNT_DANS_H));
+					//test
 					cout << distance / vMoyenne * MNT_DANS_H << endl;
 
 					// controle si on est la journée alors... sinon on est la nuit ...
 					// => 8 <= hDepart < 20, On pourrait aussi remplacer par un bool pour être plus
 					// facile à lire
 					// CAS OU ON COMMENCE LA JOURNEE
-					if (hDepart >= H_FIN_NUIT && hDepart < H_FIN_JOUR) {
+					if (estJour) {
 						//non car hDepart = 7
 						tempsJournee = H_FIN_JOUR * MNT_DANS_H - minTotalDepart;
 						tempsTotal -= tempsJournee;
