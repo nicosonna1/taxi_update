@@ -84,7 +84,7 @@ int main() {
 		LARG_COL = 23,
 		LARG_COL_P = 11, // largeur du ":"
 		LARG_COMMANDE = 26,
-		LARG_H_TICKET = 18,
+		LARG_H_TICKET = 14,
 		LARG_PRIX_TICKET = 10,
 		LARG_TOTAL = 22,
 
@@ -122,16 +122,14 @@ int main() {
 
 	bool
 		estJour,
-		estSoir,
-		estNuit;
-
+		estSoir;
 
 	// Affichage de bienvenue
 	// -----------------------
 	cout << "Bonjour, ce programme va vous demander de saisir des informations "
 		  << "sur votre voyage !" 														<< endl
-		  << "voici les conditions :" 												<< endl
-		  << "======================="												<< endl
+		  << "voici les conditions " 													<< endl
+		  << "======================"													<< endl
 		  << fixed	<< setprecision(PRECISION)
 		  << left  	<< setw(LARG_COL) 	<< " - prise en charge" 		<< ":"
 		  << right 	<< setw(LARG_COL_P) 	<< TAXE_BASE 						<< endl
@@ -282,7 +280,7 @@ int main() {
 					// -----------------------------------------
 					cout << endl
 						  << "Votre ticket " 													<< endl
-						  << "==============" 													<< endl
+						  << "============"														<< endl
 						  << fixed << setprecision(PRECISION)
 						  << left  << setw(LARG_COL) 		<< " - prise en charge" << ":"
 						  << right << setw(LARG_COL_P) 	<< TAXE_BASE 				<< endl
@@ -291,11 +289,11 @@ int main() {
 
 						  << left  << setw(LARG_COL) 		 		<< " - temps course"
 						  << endl
-						  << right << setw(LARG_H_TICKET) 		<< "xxx' @ "
-						  << TARIF_MNT_JOUR 						 		<< " : "
+						  << right << setw(LARG_H_TICKET) 		<< tempsJournee
+						  << "' @ "<< TARIF_MNT_JOUR 					<< " : "
 						  << right << setw(LARG_PRIX_TICKET) 	<< prixJournee 	<< endl
-						  << right << setw(LARG_H_TICKET) 		<< "yyy' @ "
-						  << TARIF_MNT_NUIT 								<< " : "
+						  << right << setw(LARG_H_TICKET) 		<< tempsNuit
+						  << "' @ "<< TARIF_MNT_NUIT 					<< " : "
 						  << right << setw(LARG_PRIX_TICKET) 	<< prixNuit 		<< endl
 
 						  << left  << setw(LARG_COL) 		<< "---------------------- "
