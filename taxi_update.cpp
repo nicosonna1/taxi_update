@@ -1,15 +1,31 @@
 /*
  * ------------------------------------------
- * File     	: main.cpp
+ * File     	: taxi_update.cpp
  * Authors  	: Vitória Oliveira, Nicolas Sonnard
  * 			 	 (Original : Jonas Huegli & Sebastian Diaz)
  * Date    	 	: 11.10.2022
+ *
  * Purpose  	: Ce programme calcule le prix d'une course de taxi.
  * 			  	  L'utilisateur est prié de saisir quelques informations sur la
  * 			  	  course, puis un ticket complet lui est présenté.
  * 			  	  Deux tarifs (jour/nuit) sont à appliquer sur la durée du trajet
  * 				  pour le calcul du prix total.
- * Remarque(s) : L'heure de départ doit être saisie au format [hh:mm], où l'heure
+ *
+ * Remarque(s) : Algorithme
+ * 				  Afin de calculer le temps de course espécifique à chaque tarif,
+ * 				  nous partageons la journée en 3 espaces de temps:
+ * 				  [08h, 20h[ -> le jour
+ * 				  [20h, 24h[ -> le soir
+ * 				  [00h, 08h[ -> la nuit
+ * 				  Le tarif de nuit est appliqué l'intervalle du soir & de la nuit.
+ * 				  A cause des intervalles choisies, le temps maximal de course
+ * 				  est 1000 min. Par conséquent, nous estimons qu'il y aurait au plus
+ * 				  deux changements de tarifs possibles. Dans le cas où le temps
+ * 				  maximal augmente, il serait envisageable d'utiliser des
+ * 				  instructions de boucle.
+ *
+ * 				  Autres
+ * 				  L'heure de départ doit être saisie au format [hh:mm], où l'heure
  * 				  est comprise entre [0, 23] et les minutes sont comprise entre
  * 				  [0, 59]. Le symbole ":" est obligatoire dans la saisie.
  * 				  Chaque minute consommée est facturée.
@@ -20,6 +36,7 @@
  				 	  Si les intervalles des données saisies sont changés, il faudrait
  				 	  examiner à nouveau les types des variables et tenir compte des
  				 	  possibles dépassements.
+
 Compilateur    : Mingw-w64 g++ 12.2.0, C++23
 
  * ------------------------------------------
@@ -37,7 +54,7 @@ using namespace std;
 
 int main() {
 	// Variables
-	// ---------------------------
+	// ---------
 
 	// Constantes de prix
 	const float
@@ -58,7 +75,8 @@ int main() {
 		V_MAX = 120,
 
 	// Constantes de temps
-		MNT_DANS_H = 60;
+		NB_MNT_PAR_H = 60,
+		NB_H_PAR_JOUR = 24;
 
 
 	// Constantes d'affichage (largeur des collones du tableau)
@@ -103,11 +121,13 @@ int main() {
 		prixTotal;
 
 	bool
-		estJour;
+		estJour,
+		estSoir,
+		estNuit;
 
 
 	// Affichage de bienvenue
-	// ---------------------------
+	// -----------------------
 	cout << "Bonjour, ce programme va vous demander de saisir des informations "
 		  << "sur votre voyage !" 														<< endl
 		  << "voici les conditions :" 												<< endl
@@ -128,7 +148,7 @@ int main() {
 
 
 	// Saisie des données
-	// -----------------------------------------
+	// -------------------
 	cout << "Votre commande " 														<< endl
 		  << "==============" 														<< endl
 		  << left 	<< setw(LARG_COMMANDE) 	<< " - nbre de bagage "
@@ -160,120 +180,173 @@ int main() {
 				RESET_BUFFER;
 
 
-				if (hDepart >= 0 && hDepart < 24 && mDepart >= 0 && mDepart < 60) {
+				if (hDepart >= 0 && hDepart < NB_H_PAR_JOUR &&
+					 mDepart >= 0 && mDepart < NB_MNT_PAR_H) {
 
 					estJour = hDepart >= H_FIN_NUIT && hDepart < H_FIN_JOUR;
-					minTotalDepart = hDepart * MNT_DANS_H + mDepart;
+					estSoir = hDepart >= H_FIN_JOUR && hDepart <= NB_H_PAR_JOUR;
+
+					minTotalDepart = hDepart * NB_MNT_PAR_H + mDepart;
 
 					// On estime que la conversion explicite ci dessous n'est pas
-					// dangereuse car tempsTotal maximal possible est de 1001 minutes.
-					tempsTotal = int(ceil(distance / vMoyenne * MNT_DANS_H));
+					// dangereuse car tempsTotal maximal possible est de 1000 minutes.
+					tempsTotal = int(ceil(distance / vMoyenne * NB_MNT_PAR_H));
 
 					if (estJour) {
 
-						prochainChgTarif = H_FIN_JOUR * MNT_DANS_H - minTotalDepart;
+						prochainChgTarif = H_FIN_JOUR * NB_MNT_PAR_H - minTotalDepart;
 
 						if (tempsTotal >= prochainChgTarif) {
 
-							tempsJournee = H_FIN_JOUR * MNT_DANS_H - minTotalDepart - 1;
-							tempsTotal -= tempsJournee;
+							tempsJournee = H_FIN_JOUR * NB_MNT_PAR_H - minTotalDepart;
+							tempsTotal  -= tempsJournee;
 
-							if (tempsTotal <= 12 * MNT_DANS_H) {
+							if (tempsTotal <= NB_H_PAR_JOUR * NB_MNT_PAR_H) {
+
 								tempsNuit = tempsTotal;
+
 							} else {
-								tempsNuit = 12 * MNT_DANS_H;
-								tempsTotal -= tempsNuit;
+
+								tempsNuit     = NB_H_PAR_JOUR * NB_MNT_PAR_H;
+								tempsTotal   -= tempsNuit;
 								tempsJournee += tempsTotal;
+
 							}
 						} else {
+
 							tempsJournee = tempsTotal;
+
+						}
+
+					} else if (estSoir) {
+
+						tempsNuit  += NB_H_PAR_JOUR * NB_MNT_PAR_H - minTotalDepart;
+						tempsTotal -= tempsNuit;
+
+						prochainChgTarif = H_FIN_NUIT * NB_MNT_PAR_H;
+
+						if (tempsTotal >= prochainChgTarif) {
+
+							tempsNuit    += H_FIN_NUIT * NB_MNT_PAR_H;
+							tempsTotal   -= H_FIN_NUIT * NB_MNT_PAR_H;
+							tempsJournee += tempsTotal;
+
+						} else {
+
+							tempsNuit += tempsTotal;
+
 						}
 
 					} else {
-						//temps jusqu'à minuit
-						tempsNuit += 24 * MNT_DANS_H - minTotalDepart;
-						tempsTotal -= tempsNuit;
+						// heure de départ comprise dans l'intervalle [00:00, 07h59] = nuit
 
-						prochainChgTarif = H_FIN_NUIT * MNT_DANS_H;
+						prochainChgTarif = H_FIN_NUIT * NB_MNT_PAR_H - minTotalDepart;
 
 						if (tempsTotal >= prochainChgTarif) {
 
-							tempsNuit += H_FIN_NUIT * MNT_DANS_H - 1;
-							tempsTotal -= H_FIN_NUIT * MNT_DANS_H - 1;
-							tempsJournee += tempsTotal;
+							tempsNuit   = H_FIN_NUIT * NB_MNT_PAR_H - minTotalDepart;
+							tempsTotal -= tempsNuit;
 
-							//test
-							cout << "Temps Nuit = " << tempsNuit << endl;
-							cout << "Temps total = " << tempsTotal << endl;
-							cout << "Temps journee = " << tempsJournee << endl;
+							if (tempsTotal <= NB_H_PAR_JOUR * NB_MNT_PAR_H) {
+
+								tempsJournee = tempsTotal;
+
+							} else {
+
+								tempsJournee = NB_H_PAR_JOUR * NB_MNT_PAR_H;
+								tempsTotal  -= tempsJournee;
+								tempsNuit   += tempsTotal;
+
+							}
 
 						} else {
-							tempsNuit += tempsTotal;
-							cout << "Temps total = " << tempsTotal << endl;
-							cout << " Temps nuit = " << tempsNuit << endl;
-							}
+
+							tempsNuit = tempsTotal;
 						}
+					}
 
 					// Calcul des prix
 					// -----------------------------------------
-					// conversion explicite pas dangereuse car bag max = 4
+
+					// Conversion explicite pas dangereuse car bagages max = 4
 					taxeBagages = float(bagages) * SURTAXE_BAGAGES;
-					//conversion pas dangereuse car tempsTotal MAX = 1001, alors
-					// tempsJournee et tempsNuit forcément < 1001.
+
+					// Conversion pas dangereuse car tempsTotal max = 1000, alors
+					// tempsJournee et tempsNuit forcément < 1000.
+
 					prixJournee = float(tempsJournee) * TARIF_MNT_JOUR;
-					prixNuit = float(tempsNuit) * TARIF_MNT_NUIT;
-					prixTotal = TAXE_BASE + taxeBagages + prixJournee + prixNuit;
+					prixNuit    = float(tempsNuit) * TARIF_MNT_NUIT;
+					prixTotal   = TAXE_BASE + taxeBagages + prixJournee + prixNuit;
 
 					// Affichage du ticket
 					// -----------------------------------------
 					cout << endl
-						  << "Votre ticket " << endl
-						<< "==============" << endl
-						<< fixed << setprecision(PRECISION)
-						<< left << setw(LARG_COL) << " - prise en charge" << ":"
-						<< right << setw(LARG_COL_P) << TAXE_BASE << endl
-						<< left << setw(LARG_COL) << " - supp bagages" << ":"
-						<< right << setw(LARG_COL_P) << taxeBagages << endl
-						<< left << setw(LARG_COL) << " - temps course" << endl
-						<< right << setw(LARG_H_TICKET) << "xxx' @ "
-						<< TARIF_MNT_JOUR
-						<< " : "
-						<< right << setw(LARG_PRIX_TICKET) << prixJournee << endl
-						<< right << setw(LARG_H_TICKET) << "yyy' @ "
-						<< TARIF_MNT_NUIT << " : "
-						<< right << setw(LARG_PRIX_TICKET) << prixNuit << endl
-						<< left << setw(LARG_COL) << "---------------------- "
-						<< right << setw(LARG_COL_P) << "  -----------" << endl
-						<< right << setw(LARG_TOTAL) << "TOTAL" << " : "
-						<< right << setw(LARG_PRIX_TICKET) << prixTotal << endl;
+						  << "Votre ticket " 													<< endl
+						  << "==============" 													<< endl
+						  << fixed << setprecision(PRECISION)
+						  << left  << setw(LARG_COL) 		<< " - prise en charge" << ":"
+						  << right << setw(LARG_COL_P) 	<< TAXE_BASE 				<< endl
+						  << left  << setw(LARG_COL) 		<< " - supp bagages" 	<< ":"
+						  << right << setw(LARG_COL_P)	<< taxeBagages 			<< endl
+
+						  << left  << setw(LARG_COL) 		 		<< " - temps course"
+						  << endl
+						  << right << setw(LARG_H_TICKET) 		<< "xxx' @ "
+						  << TARIF_MNT_JOUR 						 		<< " : "
+						  << right << setw(LARG_PRIX_TICKET) 	<< prixJournee 	<< endl
+						  << right << setw(LARG_H_TICKET) 		<< "yyy' @ "
+						  << TARIF_MNT_NUIT 								<< " : "
+						  << right << setw(LARG_PRIX_TICKET) 	<< prixNuit 		<< endl
+
+						  << left  << setw(LARG_COL) 		<< "---------------------- "
+						  << right << setw(LARG_COL_P) 	<< "  -----------" 		<< endl
+
+						  << right << setw(LARG_TOTAL) 			<< "TOTAL" 		<< " : "
+						  << right << setw(LARG_PRIX_TICKET) 	<< prixTotal 	<< endl;
 
 				} else {
+
 					cout << "L'heure de depart doit etre comprise dans entre [00:00, "
 							  "23:59]. " << endl
 						  << MSG_FIN;
+
 					return EXIT_FAILURE;
+
 				}
+
 			} else {
+
 				cout << "La vitesse doit etre comprise entre [30, 120] [km/h]. "
 					  << endl
 					  << MSG_FIN;
 				RESET_BUFFER;
+
 				return EXIT_FAILURE;
+
 			}
+
 		} else {
+
 			cout << "La distance doit etre comprise entre [0, 500] [km]. " << endl
 				  << MSG_FIN;
 			RESET_BUFFER;
+
 			return EXIT_FAILURE;
+
 		}
+
 	} else {
 		cout << "Le nombre de bagages doit etre compris entre [0, 4]. " << endl
 			  << MSG_FIN;
 		RESET_BUFFER;
+
 		return EXIT_FAILURE;
+
 	}
+
 	cout << endl << MSG_FIN;
 	RESET_BUFFER;
+
 	return EXIT_SUCCESS;
 
 }
