@@ -50,6 +50,7 @@ Compilateur    : Mingw-w64 g++ 12.2.0, C++23
 
 using namespace std;
 
+#define SEPARATEUR "================"
 #define RESET_BUFFER cin.ignore(numeric_limits<streamsize>::max(), '\n')
 
 int main() {
@@ -58,42 +59,42 @@ int main() {
 
 	// Constantes de prix
 	const float
-		TAXE_BASE = 5.0f,
-		SURTAXE_BAGAGES = 2.6f,
-		TARIF_MNT_JOUR = 1.0f,
-		TARIF_MNT_NUIT = 1.6f;
+		TAXE_BASE 			= 5.0f,
+		SURTAXE_BAGAGES 	= 2.6f,
+		TARIF_MNT_JOUR 	= 1.0f,
+		TARIF_MNT_NUIT 	= 1.6f;
 
 	// Constantes des bornes d'intervalle des saisies
 	const short
-		H_FIN_NUIT = 8,
-		H_FIN_JOUR = 20,
-		BAG_MIN = 0,
-		BAG_MAX = 4,
-		DIST_MAX = 500,
-		DIST_MIN = 0,
-		V_MIN = 30,
-		V_MAX = 120,
+		H_FIN_NUIT 			= 8,
+		H_FIN_JOUR 			= 20,
+		BAG_MIN 				= 0,
+		BAG_MAX 				= 4,
+		DIST_MAX 			= 500,
+		DIST_MIN 			= 0,
+		V_MIN 				= 30,
+		V_MAX 				= 120,
 
 	// Constantes de temps
-		NB_MNT_PAR_H = 60,
-		NB_H_PAR_JOUR = 24;
+		NB_MNT_PAR_H 		= 60,
+		NB_H_PAR_JOUR		= 24;
 
 
 	// Constantes d'affichage (largeur des collones du tableau)
 	const short
-		LARG_COL = 23,
-		LARG_COL_P = 11, // largeur du ":"
-		LARG_COMMANDE = 26,
-		LARG_H_TICKET = 14,
-		LARG_PRIX_TICKET = 10,
-		LARG_TOTAL = 22,
+		LARG_COL 			= 23,
+		LARG_COL_P 			= 11, // largeur du ":"
+		LARG_COMMANDE 		= 26,
+		LARG_H_TICKET 		= 14,
+		LARG_PRIX_TICKET 	= 10,
+		LARG_TOTAL 			= 22,
 
 	// Constante de précision
-		PRECISION = 2;
+		PRECISION 			= 2;
 
 	// Constante message de fin du programme
 	const string
-		MSG_FIN = "Presser ENTER pour quitter";
+		MSG_FIN 				= "Presser ENTER pour quitter";
 
 	// Variables numériques
 	short
@@ -129,7 +130,7 @@ int main() {
 	cout << "Bonjour, ce programme va vous demander de saisir des informations "
 		  << "sur votre voyage !" 														<< endl
 		  << "voici les conditions " 													<< endl
-		  << "======================"													<< endl
+		  << SEPARATEUR																	<< endl
 		  << fixed	<< setprecision(PRECISION)
 		  << left  	<< setw(LARG_COL) 	<< " - prise en charge" 		<< ":"
 		  << right 	<< setw(LARG_COL_P) 	<< TAXE_BASE 						<< endl
@@ -148,7 +149,7 @@ int main() {
 	// Saisie des données
 	// -------------------
 	cout << "Votre commande " 														<< endl
-		  << "==============" 														<< endl
+		  << SEPARATEUR																<< endl
 		  << left 	<< setw(LARG_COMMANDE) 	<< " - nbre de bagage "
 		  << right	<< setw(LARG_COL_P) 	 	<< " [0 - 4]" 				<< " : ";
 	cin  >> bagages;
@@ -280,7 +281,7 @@ int main() {
 					// -----------------------------------------
 					cout << endl
 						  << "Votre ticket " 													<< endl
-						  << "============"														<< endl
+						  << SEPARATEUR															<< endl
 						  << fixed << setprecision(PRECISION)
 						  << left  << setw(LARG_COL) 		<< " - prise en charge" << ":"
 						  << right << setw(LARG_COL_P) 	<< TAXE_BASE 				<< endl
