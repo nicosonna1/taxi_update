@@ -190,15 +190,9 @@ int main() {
 						}
 
 					} else {
-						cout << "Jour: " << estJour << endl;
-						cout << "Temps total = " << tempsTotal << endl;
-						cout << " Temps nuit = " << tempsNuit << endl;
-
 						//temps jusqu'à minuit
 						tempsNuit += 24 * MNT_DANS_H - minTotalDepart;
 						tempsTotal -= tempsNuit;
-						cout << "Temps total = " << tempsTotal << endl;
-						cout << " Temps nuit = " << tempsNuit << endl;
 
 						prochainChgTarif = H_FIN_NUIT * MNT_DANS_H;
 
@@ -222,8 +216,8 @@ int main() {
 
 					// Calcul des prix
 					// -----------------------------------------
-					// conversion exp pas dagereuse car bag max = 4
-					taxeBagages = (float) bagages * SURTAXE_BAGAGES;
+					// conversion explicite pas dangereuse car bag max = 4
+					taxeBagages = float(bagages) * SURTAXE_BAGAGES;
 					//conversion pas dangereuse car tempsTotal MAX = 1001, alors
 					// tempsJournee et tempsNuit forcément < 1001.
 					prixJournee = float(tempsJournee) * TARIF_MNT_JOUR;
